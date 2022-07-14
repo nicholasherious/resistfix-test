@@ -21,6 +21,7 @@
     "@uiball/loaders": "^1.2.6",
     "apollo-server-errors": "^3.3.1",
     "apollo-server-micro": "^3.9.0",
+    "axios": "^0.27.2",
     "graphql": "^16.5.0",
     "micro": "^9.3.4",
     "micro-cors": "^0.1.1",

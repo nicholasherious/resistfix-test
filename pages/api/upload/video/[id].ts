@@ -1,11 +1,11 @@
-import Mux from '@mux/mux-node';
+import Mux from "@mux/mux-node";
 const { Video } = new Mux();
 
 export default async function uploadHandler(req, res) {
   const { method } = req;
 
   switch (method) {
-    case 'GET':
+    case "GET":
       try {
         const upload = await Video.Uploads.get(req.query.id);
         res.json({
@@ -16,12 +16,12 @@ export default async function uploadHandler(req, res) {
           },
         });
       } catch (e) {
-        console.error('Request error', e);
-        res.status(500).json({ error: 'Error getting upload/asset' });
+        console.error("Request error", e);
+        res.status(500).json({ error: "Error getting upload/asset" });
       }
       break;
     default:
-      res.setHeader('Allow', ['GET']);
+      res.setHeader("Allow", ["GET"]);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 }

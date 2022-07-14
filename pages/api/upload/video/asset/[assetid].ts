@@ -1,14 +1,13 @@
-
 import Mux from '@mux/mux-node'
 const { Video } = new Mux()
 
 export default async function assetHandler(req, res) {
   const { method } = req
-
+console.log(req.query.assetid)
   switch (method) {
     case 'GET':
       try {
-        const asset = await Video.Assets.get(req.query.id)
+        const asset = await Video.Assets.get(req.query.assetid)
         res.json({
           asset: {
             id: asset.id,
