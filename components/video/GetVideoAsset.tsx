@@ -3,6 +3,7 @@ import Router, { useRouter } from "next/router";
 import Link from "next/link";
 import useSwr from "swr";
 import VideoPlayer from "./VideoPlayer";
+import { Ripples } from '@uiball/loaders';
 
 const fetcher = (url) => {
   return fetch(url).then((res) => res.json());
@@ -42,7 +43,7 @@ function GetVideoAsset({ upload }) {
   }
   return (
     <div>
-      <div>{playBackId ? <VideoPlayer playBackId={playBackId}/> : "Preparing...."}</div>
+      <div>{playBackId ? <VideoPlayer playBackId={playBackId}/> : <Ripples size={50} speed={2} color='#1F2937' />}</div>
     </div>
   );
 }
