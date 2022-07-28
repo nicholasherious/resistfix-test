@@ -4,17 +4,22 @@ import { PrismaClient } from '@prisma/client';
 // exhausting your database connection limit.
 // Learn more: https://pris.ly/d/help/next-js-best-practices
 
-let prisma: PrismaClient;
+const prismaClientPropertyName = `__prevent-name-collision__prisma`;
+type GlobalThisWithPrismaClient = typeof globalThis & {
+  [prismaClientPropertyName]: PrismaClient;
+};
 
-if (process.env.NODE_ENV === 'production') {
-  prisma = new PrismaClient();
-} else {
-  let globalWithPrisma = global as typeof globalThis & {
-    prisma: PrismaClient;
-  };
-  if (!globalWithPrisma.prisma) {
-    globalWithPrisma.prisma = new PrismaClient();
+const getPrismaClient = () => {
+  if (process.env.NODE_ENV === `production`) {
+    return new PrismaClient();
+  } else {
+    const newGlobalThis = globalThis as GlobalThisWithPrismaClient;
+    if (!newGlobalThis[prismaClientPropertyName]) {
+      newGlobalThis[prismaClientPropertyName] = new PrismaClient();
+    }
+    return newGlobalThis[prismaClientPropertyName];
   }
-  prisma = globalWithPrisma.prisma;
-}
+};
+
+const prisma = getPrismaClient();
 export default prisma;

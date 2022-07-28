@@ -2,8 +2,8 @@ import React from 'react';
 import { useQuery } from '@apollo/client';
 
 import { GET_ALL_POSTS } from '../graphql/queries';
-import { Ripples } from '@uiball/loaders';
 import Post from './Post';
+import Loading from './Loading/Loading';
 
 type Props = {
   post: Post[];
@@ -14,9 +14,7 @@ function Feed() {
 
   if (loading)
     return (
-      <div className='flex w-full items-center justify-center p-10 text-xl'>
-        <Ripples size={50} speed={2} color='#1F2937' />
-      </div>
+      <Loading />
     );
   if (error) return <p>Oh no... {error.message}</p>;
   return (

@@ -18,27 +18,29 @@ type Like {
 
 type Mutation {
   createComment(authorId: String, postId: String, text: String!): Comment
-  createPost(authorId: String, category: String, description: String, imageUrl: String, title: String!, url: String): Post
+  createPost(authorId: String, mediaPublicId: String, mediaUrl: String, resourceType: String, title: String!): Post
   deletePost(id: String!): Post
   editPost(category: String, description: String, id: String!, imageUrl: String, title: String!, url: String): Post
   like(likeId: String!): Like
+  replyToComment(authorId: String, parentCommentId: String, postId: String, text: String!): Comment
 }
 
 type Post {
   authorId: String
   category: String
   comments: [Comment]
-  description: String
   id: String
-  imageUrl: String
+  mediaPublicId: String
+  mediaUrl: String
+  resourceType: String
   title: String
-  url: String
   user: User
 }
 
 type Query {
   comments: [Comment]!
   posts: [Post]!
+  singleComment(postId: String!): Comment
   singlePost(postId: String!): Post
   users: [User]!
 }

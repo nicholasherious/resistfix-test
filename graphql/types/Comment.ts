@@ -31,6 +31,18 @@ export const Comment = objectType({
           .post();
       },
     });
+    // t.field('childComments', {
+    //   type: 'Comment',
+    //   async resolve(_parent, _args, ctx) {
+    //     return await ctx.prisma.comment
+    //       .findUnique({
+    //         where: {
+    //           id: _parent.id,
+    //         },
+    //       })
+    //       .childComments();
+    //   },
+    // });
   },
 });
 
@@ -45,14 +57,25 @@ export const CommentsQuery = extendType({
       resolve(_parent, _args, ctx) {
         return ctx.prisma.comment.findMany({
           orderBy: { createdAt: 'desc' },
+          include: { childComments: true }
+          
+        });
+      },
+    });
+    t.field('singleComment', {
+      type: 'Comment',
+      args: { postId: nonNull(stringArg()) },
+      resolve(_root, args, ctx) {
+        return ctx.prisma.comment.findUnique({
+          where: { id: args.postId },
+          include: { childComments: { include: {childComments: true}}}
         });
       },
     });
   },
 });
 
-
-// Mutations 
+// Mutations
 
 // Create Comment
 export const CommentMutation = extendType({
@@ -71,6 +94,25 @@ export const CommentMutation = extendType({
         });
       },
     });
+    // Reply To Comment Comment
+    t.field('replyToComment', {
+      type: 'Comment',
+      args: {
+        text: nonNull(stringArg()),
+        authorId: stringArg(),
+        parentCommentId: stringArg(),
+        postId: stringArg(),
+      },
+      async resolve(_parent, args, ctx) {
+        return await ctx.prisma.comment.create({
+          data: {
+            text: args.text,
+            authorId: args.authorId,
+            postId: args.postId,
+            parentCommentId: args.parentCommentId,
+          },
+        });
+      },
+    });
   },
-})
-
+});

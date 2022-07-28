@@ -5,10 +5,7 @@ export const GET_ALL_POSTS = gql`
     posts {
       id
       title
-      url
-      description
-      imageUrl
-      category
+      mediaUrl
       authorId
       user {
         name
@@ -24,6 +21,8 @@ export const GET_ALL_POSTS = gql`
           id
         }
       }
+      mediaPublicId
+      resourceType
     }
   }
 `;
@@ -33,24 +32,23 @@ export const GET_SINGLE_POST = gql`
     singlePost(postId: $postId) {
       id
       title
-      url
-      description
-      imageUrl
+      mediaPublicId
+      resourceType
       category
       authorId
+      mediaUrl
       user {
         name
-        email
-        image
-        role
         id
+        image
       }
       comments {
+        id
         text
         authorId
         user {
           name
-          image
+          id
         }
       }
     }
@@ -60,27 +58,45 @@ export const GET_SINGLE_POST = gql`
 export const CreatePostMutation = gql`
   mutation CreatePost(
     $title: String!
-    $url: String
-    $description: String
-    $imageUrl: String
-    $category: String
+    $mediaPublicId: String
     $authorId: String
+    $resourceType: String
+    $mediaUrl: String
   ) {
     createPost(
       title: $title
-      url: $url
-      description: $description
-      imageUrl: $imageUrl
-      category: $category
+      mediaPublicId: $mediaPublicId
       authorId: $authorId
+      resourceType: $resourceType
+      mediaUrl: $mediaUrl
     ) {
       id
       title
-      url
-      description
-      imageUrl
-      category
+      mediaPublicId
+      resourceType
       authorId
+      mediaUrl
+      user {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const CreateCommentMutation = gql`
+  mutation CreateComment($text: String!, $authorId: String, $postId: String) {
+    createComment(text: $text, authorId: $authorId, postId: $postId) {
+      id
+      text
+      authorId
+      postId
+      user {
+        name
+      }
+      post {
+        title
+      }
     }
   }
 `;

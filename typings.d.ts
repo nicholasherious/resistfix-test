@@ -6,4 +6,5 @@ type Post = {
   imageUrl: string;
   category: string;
   comments: []
+  isSinglePage: string
 };

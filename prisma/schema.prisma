@@ -27,6 +27,8 @@ model Account {
   scope              String?
   id_token           String?  @db.Text
   session_state      String?
+  oauth_token        String? @db.Text
+  oauth_token_secret String? @db.Text 
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -53,7 +55,8 @@ model User {
   posts Post[] @relation(name: "PostedBy")
   likes Post[] @relation(name: "Likes")
 
-  comments Comment[]
+  comments Comment[] @relation("UserAuthorsComment")
+  likedComments Comment[] @relation("UserLikesComment")
   role          Role @default(USER)
 }
 
@@ -77,10 +80,9 @@ model Post {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   title       String
-  description String
-  url         String
-  imageUrl    String
-  category    String
+  mediaPublicId   String?
+  resourceType String?
+  mediaUrl String?
  user      User @relation(name: "PostedBy", fields: [authorId], references: [id])
  authorId    String
   comments Comment[]
@@ -94,9 +96,17 @@ model Comment {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   text        String
-  user        User @relation(fields: [authorId], references: [id])
+  user        User @relation("UserAuthorsComment", fields: [authorId], references: [id])
   authorId    String
+ 
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId String
+
+comment Comment? @relation("Children_Comment", fields: [parentCommentId], references: [id])
+  parentCommentId String?
+childComments Comment[] @relation("Children_Comment")
+  likedBy     User[] @relation("UserLikesComment")
+
+  
  
 }

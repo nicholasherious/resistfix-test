@@ -6,11 +6,11 @@ export const Post = objectType({
   definition(t) {
     t.string('id');
     t.string('title');
-    t.string('url');
-    t.string('description');
-    t.string('imageUrl');
+    t.string('mediaPublicId');
+    t.string('resourceType');
     t.string('category');
     t.string('authorId');
+    t.string('mediaUrl');
     t.field('user', {
       type: 'User',
       async resolve(_parent, _args, ctx) {
@@ -77,15 +77,15 @@ export const PostMutation = extendType({
       type: 'Post',
       args: {
         title: nonNull(stringArg()),
-        url: stringArg(),
-        description: stringArg(),
-        imageUrl: stringArg(),
-        category: stringArg(),
+        mediaPublicId: stringArg(),
+      
         authorId: stringArg(),
+        resourceType: stringArg(),
+        mediaUrl: stringArg(),
       },
       resolve(
         _parent,
-        { title, url, description, imageUrl, category, authorId },
+        { title, mediaPublicId, authorId, resourceType, mediaUrl },
         ctx
       ) {
         // if (!ctx.session) {
@@ -96,11 +96,10 @@ export const PostMutation = extendType({
         return ctx.prisma.post.create({
           data: {
             title,
-            url,
-            description,
-            imageUrl,
-            category,
+            mediaPublicId,
             authorId,
+            resourceType,
+            mediaUrl,
           },
         });
       },
