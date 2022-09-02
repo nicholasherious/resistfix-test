@@ -1,18 +1,18 @@
-import { objectType, extendType, nonNull, intArg, arg, stringArg } from 'nexus';
-import { AuthenticationError } from 'apollo-server-errors';
+import { objectType, extendType, nonNull, intArg, arg, stringArg } from "nexus";
+import { AuthenticationError } from "apollo-server-errors";
 
 export const Post = objectType({
-  name: 'Post',
+  name: "Post",
   definition(t) {
-    t.string('id');
-    t.string('title');
-    t.string('mediaPublicId');
-    t.string('resourceType');
-    t.string('category');
-    t.string('authorId');
-    t.string('mediaUrl');
-    t.field('user', {
-      type: 'User',
+    t.string("id");
+    t.string("title");
+    t.string("mediaPublicId");
+    t.string("resourceType");
+    t.string("category");
+    t.string("authorId");
+    t.string("mediaUrl");
+    t.field("user", {
+      type: "User",
       async resolve(_parent, _args, ctx) {
         return await ctx.prisma.post
           .findUnique({
@@ -23,44 +23,48 @@ export const Post = objectType({
           .user();
       },
     });
-    t.list.field('comments', {
-      type: 'Comment',
+    t.list.field("comments", {
+      type: "Comment",
       async resolve(_parent, _args, ctx) {
         return await ctx.prisma.post
           .findUnique({
             where: {
               id: _parent.id,
+              
             },
+            
           })
           .comments();
       },
     });
+    
   },
 });
 
 export const PostsQuery = extendType({
-  type: 'Query',
+  type: "Query",
   definition(t) {
     // Get all Posts
-    t.nonNull.list.field('posts', {
-      type: 'Post',
+    t.nonNull.list.field("posts", {
+      type: "Post",
       resolve(_parent, _args, ctx) {
         console.log(ctx.session);
         return ctx.prisma.post.findMany({
-          orderBy: { createdAt: 'desc' },
+          orderBy: { createdAt: "desc" },
         });
       },
     });
 
     // Single Post
-    t.field('singlePost', {
-      type: 'Post',
+    t.field("singlePost", {
+      type: "Post",
       args: {
         postId: nonNull(stringArg()),
       },
       resolve(_root, args, ctx) {
         return ctx.prisma.post.findUnique({
           where: { id: args.postId },
+          include: { comments: true}
         });
       },
     });
@@ -70,15 +74,15 @@ export const PostsQuery = extendType({
 // Mutations
 
 export const PostMutation = extendType({
-  type: 'Mutation',
+  type: "Mutation",
   definition(t) {
     // Create Post
-    t.field('createPost', {
-      type: 'Post',
+    t.field("createPost", {
+      type: "Post",
       args: {
         title: nonNull(stringArg()),
         mediaPublicId: stringArg(),
-      
+
         authorId: stringArg(),
         resourceType: stringArg(),
         mediaUrl: stringArg(),
@@ -105,8 +109,8 @@ export const PostMutation = extendType({
       },
     });
     //Edit Post
-    t.field('editPost', {
-      type: 'Post',
+    t.field("editPost", {
+      type: "Post",
       args: {
         id: nonNull(stringArg()),
         title: nonNull(stringArg()),
@@ -129,8 +133,8 @@ export const PostMutation = extendType({
       },
     });
     // Delete Post
-    t.field('deletePost', {
-      type: 'Post',
+    t.field("deletePost", {
+      type: "Post",
       args: {
         id: nonNull(stringArg()),
       },

@@ -1,14 +1,15 @@
-import { extendType, nonNull, objectType, stringArg } from 'nexus';
+import { extendType, nonNull, objectType, stringArg } from "nexus";
 
 export const Comment = objectType({
-  name: 'Comment',
+  name: "Comment",
   definition(t) {
-    t.string('id');
-    t.string('text');
-    t.string('authorId');
-    t.string('postId');
-    t.field('user', {
-      type: 'User',
+    t.string("id");
+    t.string("text");
+    t.string("authorId");
+    t.string("postId");
+    t.string("parentCommentId");
+    t.field("user", {
+      type: "User",
       async resolve(_parent, _args, ctx) {
         return await ctx.prisma.comment
           .findUnique({
@@ -19,8 +20,8 @@ export const Comment = objectType({
           .user();
       },
     });
-    t.field('post', {
-      type: 'Post',
+    t.field("post", {
+      type: "Post",
       async resolve(_parent, _args, ctx) {
         return await ctx.prisma.comment
           .findUnique({
@@ -31,44 +32,29 @@ export const Comment = objectType({
           .post();
       },
     });
-    // t.field('childComments', {
-    //   type: 'Comment',
-    //   async resolve(_parent, _args, ctx) {
-    //     return await ctx.prisma.comment
-    //       .findUnique({
-    //         where: {
-    //           id: _parent.id,
-    //         },
-    //       })
-    //       .childComments();
-    //   },
-    // });
   },
 });
 
 // Query
 
 export const CommentsQuery = extendType({
-  type: 'Query',
+  type: "Query",
   definition(t) {
     // Get all Comments
-    t.nonNull.list.field('comments', {
-      type: 'Comment',
+    t.nonNull.list.field("comments", {
+      type: "Comment",
       resolve(_parent, _args, ctx) {
         return ctx.prisma.comment.findMany({
-          orderBy: { createdAt: 'desc' },
-          include: { childComments: true }
-          
+          orderBy: { createdAt: "desc" },
         });
       },
     });
-    t.field('singleComment', {
-      type: 'Comment',
+    t.field("singleComment", {
+      type: "Comment",
       args: { postId: nonNull(stringArg()) },
       resolve(_root, args, ctx) {
         return ctx.prisma.comment.findUnique({
           where: { id: args.postId },
-          include: { childComments: { include: {childComments: true}}}
         });
       },
     });
@@ -79,10 +65,10 @@ export const CommentsQuery = extendType({
 
 // Create Comment
 export const CommentMutation = extendType({
-  type: 'Mutation',
+  type: "Mutation",
   definition(t) {
-    t.field('createComment', {
-      type: 'Comment',
+    t.field("createComment", {
+      type: "Comment",
       args: {
         text: nonNull(stringArg()),
         authorId: stringArg(),
@@ -95,8 +81,8 @@ export const CommentMutation = extendType({
       },
     });
     // Reply To Comment Comment
-    t.field('replyToComment', {
-      type: 'Comment',
+    t.field("replyToComment", {
+      type: "Comment",
       args: {
         text: nonNull(stringArg()),
         authorId: stringArg(),

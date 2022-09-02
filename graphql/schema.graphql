@@ -5,6 +5,7 @@
 type Comment {
   authorId: String
   id: String
+  parentCommentId: String
   post: Post
   postId: String
   text: String

@@ -7,6 +7,7 @@ generator client {
 
 
 
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -101,11 +102,11 @@ model Comment {
  
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId String
-
-comment Comment? @relation("Children_Comment", fields: [parentCommentId], references: [id])
-  parentCommentId String?
+parentCommentId String?
+parentComment Comment? @relation("Children_Comment", fields: [parentCommentId], references: [id])
+  
 childComments Comment[] @relation("Children_Comment")
-  likedBy     User[] @relation("UserLikesComment")
+likedBy     User[] @relation("UserLikesComment")
 
   
  
